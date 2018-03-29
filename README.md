@@ -5,8 +5,6 @@ meminfo For Node.js
 
 Get memory information on Linux.
 
-NOTICE: N-API is a new experimental feature in Node.js 8.
-
 ## Installation
 
 Run `npm i` or `npm install` to install.

@@ -28,6 +28,5 @@ describe('free', function() {
     expect(result.swap.total).to.be.a('number');
     expect(result.swap.used).to.be.a('number');
     expect(result.swap.free).to.be.a('number');
-    console.log(result);
   });
 });
