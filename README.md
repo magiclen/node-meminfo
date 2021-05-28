@@ -1,38 +1,16 @@
 meminfo For Node.js
 =================================
 
-## Introduction
+[![CI](https://github.com/magiclen/node-meminfo/actions/workflows/ci.yml/badge.svg)](https://github.com/magiclen/node-meminfo/actions/workflows/ci.yml)
 
 Get memory information on Linux.
-
-## Installation
-
-Run `npm i` or `npm install` to install.
-
-```bash
-npm install node-meminfo
-```
-
-If you want to save this module to package.json, please add `--save` option.
-
-```bash
-npm install node-meminfo --save
-```
-
-## Initialization
-
-Import this module by using `require` function.
-
-```javascript
-const meminfo = require('node-meminfo');
-```
 
 ## Usage
 
 You can use `get` function to get the fields and values from `/proc/meminfo`.
 
 ```javascript
-var result = meminfo.get();
+const result = meminfo.get();
 // { MemTotal: 33638309888,
 //   MemFree: 6813110272,
 //   MemAvailable: 25217355776,
@@ -86,7 +64,7 @@ var result = meminfo.get();
 If you like to use `free` command on Linux, you probably prefer to use `free` function to get the objects which have the same fields as `free` command's.
 
 ```javascript
-var result = meminfo.free();
+const result = meminfo.free();
 // { mem:
 //    { total: 33638309888,
 //      used: 7504060416,
@@ -96,15 +74,6 @@ var result = meminfo.free();
 //      cache: 19390914560,
 //      available: 25142546432 },
 //   swap: { total: 0, used: 0, free: 0 } }
-```
-
-## Tests
-
-To run the test suite, first install the dependencies, then run `npm test`:
-
-```bash
-npm install
-npm test
 ```
 
 ## License
