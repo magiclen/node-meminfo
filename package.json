@@ -15,6 +15,9 @@
   "engines": {
     "node": ">=12"
   },
+  "os": [
+    "linux"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/magiclen/node-meminfo.git"
