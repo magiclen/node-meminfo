@@ -1,12 +1,14 @@
 {
   "name": "node-meminfo",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Get memory information on Linux.",
-  "main": "src/lib.js",
+  "main": "index.node",
   "typings": "index.d.ts",
   "scripts": {
     "test": "mocha tests/**/*.test.js",
-    "build": "node-gyp rebuild",
+    "native-build": "cargo-cp-artifact -nc index.node -- cargo build --release --message-format=json-render-diagnostics",
+    "build": "npm run native-build",
+    "install": "npm run native-build",
     "prepare": "npm run build",
     "prepublishOnly": "npm run test"
   },
@@ -18,7 +20,7 @@
     "url": "git+https://github.com/magiclen/node-meminfo.git"
   },
   "keywords": [
-    "nodejs",
+    "node.js",
     "meminfo"
   ],
   "author": "Magic Len <len@magiclen.org> (https://magiclen.org)",
@@ -26,9 +28,9 @@
   "bugs": {
     "url": "https://github.com/magiclen/node-meminfo/issues"
   },
-  "homepage": "https://magiclen.org/node-meminfo/",
+  "homepage": "https://magiclen.org/node-js-int32/",
   "dependencies": {
-    "bindings": "^1.5.0"
+    "cargo-cp-artifact": "^0.1"
   },
   "devDependencies": {
     "chai": "^4.3.4",

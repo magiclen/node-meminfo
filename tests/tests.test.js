@@ -21,11 +21,12 @@ describe("free", function () {
         expect(result.mem.used).to.be.a("number");
         expect(result.mem.free).to.be.a("number");
         expect(result.mem.shared).to.be.a("number");
-        expect(result.mem.buff).to.be.a("number");
+        expect(result.mem.buffers).to.be.a("number");
         expect(result.mem.cache).to.be.a("number");
         expect(result.mem.available).to.be.a("number");
         expect(result.swap.total).to.be.a("number");
         expect(result.swap.used).to.be.a("number");
         expect(result.swap.free).to.be.a("number");
+        expect(result.swap.cache).to.be.a("number");
     });
 });

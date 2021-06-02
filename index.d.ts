@@ -3,7 +3,7 @@ interface Mem {
     used: number;
     free: number;
     shared: number;
-    buff: number;
+    buffers: number;
     cache: number;
     available: number;
 }
@@ -12,6 +12,7 @@ interface Swap {
     total: number;
     used: number;
     free: number;
+    cache: number;
 }
 
 interface Free {

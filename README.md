@@ -5,6 +5,8 @@ meminfo For Node.js
 
 Get memory information on Linux.
 
+You need to set up the Rust development environment: [rustup](https://rustup.rs/)
+
 ## Usage
 
 You can use `get` function to get the fields and values from `/proc/meminfo`.
@@ -73,7 +75,7 @@ const result = meminfo.free();
 //      buff: 45658112,
 //      cache: 19390914560,
 //      available: 25142546432 },
-//   swap: { total: 0, used: 0, free: 0 } }
+//   swap: { total: 0, used: 0, free: 0, cache: 0 } }
 ```
 
 ## License
