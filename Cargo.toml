@@ -1,10 +1,10 @@
 [package]
 name = "node-meminfo"
-version = "2.0.0"
+version = "2.0.3"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2018"
-repository = "https://github.com/magiclen/node-int32"
-homepage = "https://magiclen.org/node-js-int32/"
+repository = "https://github.com/magiclen/node-meminfo"
+homepage = "https://magiclen.org/node-meminfo/"
 keywords = ["node.js", "meminfo"]
 categories = []
 description = "Get memory information on Linux."
