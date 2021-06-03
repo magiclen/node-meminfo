@@ -1,6 +1,6 @@
 {
   "name": "node-meminfo",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Get memory information on Linux.",
   "main": "src/lib.js",
   "typings": "index.d.ts",
