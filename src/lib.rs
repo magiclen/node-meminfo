@@ -1,6 +1,3 @@
-extern crate neon;
-extern crate scanner_rust;
-
 use std::str::from_utf8_unchecked;
 
 use neon::prelude::*;

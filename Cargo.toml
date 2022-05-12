@@ -2,7 +2,7 @@
 name = "node-meminfo"
 version = "2.0.6"
 authors = ["Magic Len <len@magiclen.org>"]
-edition = "2018"
+edition = "2021"
 repository = "https://github.com/magiclen/node-meminfo"
 homepage = "https://magiclen.org/node-meminfo/"
 keywords = ["node.js", "meminfo"]
@@ -22,6 +22,6 @@ codegen-units = 1
 scanner-rust = "2"
 
 [dependencies.neon]
-version = "0.9"
+version = "0.10"
 default-features = false
 features = ["napi-6"]
