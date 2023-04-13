@@ -20,7 +20,7 @@
     "test": "node --experimental-specifier-resolution=node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:coverage": "node --experimental-specifier-resolution=node --experimental-vm-modules  node_modules/jest/bin/jest.js --coverage",
     "test:inspect-brk": "node --experimental-specifier-resolution=node --experimental-vm-modules --inspect-brk=0.0.0.0:9230 node_modules/jest/bin/jest.js --testTimeout 0 --runInBand",
-    "clean": "rimraf lib index.*",
+    "clean": "rimraf lib",
     "install": "napi build --platform --js index.cjs --release",
     "build": "npm run clean && npm run install && tsc -p tsconfig.build.json",
     "build:watch": "npm run build -- -w",
