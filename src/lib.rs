@@ -1,22 +1,48 @@
 use std::str::from_utf8_unchecked;
 
-use neon::prelude::*;
+use napi::bindgen_prelude::*;
+use napi_derive::napi;
+use scanner_rust::{generic_array::typenum::U768, ScannerAscii};
 
-use scanner_rust::generic_array::typenum::U768;
-use scanner_rust::ScannerAscii;
+#[napi(object)]
+pub struct Swap {
+    pub total: f64,
+    pub used:  f64,
+    pub free:  f64,
+    pub cache: f64,
+}
 
-fn get(mut cx: FunctionContext) -> JsResult<JsObject> {
+#[napi(object)]
+pub struct Mem {
+    pub total:     f64,
+    pub used:      f64,
+    pub free:      f64,
+    pub shared:    f64,
+    pub buffers:   f64,
+    pub cache:     f64,
+    pub available: f64,
+}
+
+#[napi(object)]
+pub struct Free {
+    pub mem:  Mem,
+    pub swap: Swap,
+}
+
+/// Get data from `/proc/meminfo`.
+#[napi(ts_return_type="Record<string, number>")]
+pub fn meminfo(env: Env) -> Result<Object> {
     let mut sc: ScannerAscii<_, U768> = match ScannerAscii::scan_path2("/proc/meminfo") {
         Ok(file) => file,
-        Err(err) => return cx.throw_error(err.to_string()),
+        Err(err) => return Err(Error::from_reason(err.to_string())),
     };
 
-    let obj = JsObject::new(&mut cx);
+    let mut obj = env.create_object().unwrap();
 
     loop {
         let label = match sc.next_raw() {
             Ok(v) => v,
-            Err(err) => return cx.throw_error(err.to_string()),
+            Err(err) => return Err(Error::from_reason(err.to_string())),
         };
 
         match label {
@@ -26,28 +52,26 @@ fn get(mut cx: FunctionContext) -> JsResult<JsObject> {
                 }
 
                 let value = match sc.next_usize() {
-                    Ok(v) => {
-                        match v {
-                            Some(v) => v * 1024,
-                            None => return cx.throw_error("unexpected EOF"),
-                        }
-                    }
-                    Err(err) => return cx.throw_error(err.to_string()),
+                    Ok(v) => match v {
+                        Some(v) => v * 1024,
+                        None => return Err(Error::from_reason("unexpected EOF")),
+                    },
+                    Err(err) => return Err(Error::from_reason(err.to_string())),
                 };
 
                 match sc.drop_next_line() {
                     Ok(v) => {
                         if v.is_none() {
-                            return cx.throw_error("unexpected EOF");
+                            return Err(Error::from_reason("unexpected EOF"));
                         }
-                    }
-                    Err(err) => return cx.throw_error(err.to_string()),
+                    },
+                    Err(err) => return Err(Error::from_reason(err.to_string())),
                 }
 
-                let value = JsNumber::new(&mut cx, value as f64);
+                let value = env.create_double(value as f64)?;
 
-                obj.set(&mut cx, unsafe { from_utf8_unchecked(&label) }, value)?;
-            }
+                obj.set(unsafe { from_utf8_unchecked(&label) }, value)?;
+            },
             None => break,
         }
     }
@@ -55,7 +79,9 @@ fn get(mut cx: FunctionContext) -> JsResult<JsObject> {
     Ok(obj)
 }
 
-fn free(mut cx: FunctionContext) -> JsResult<JsObject> {
+/// Get data from `/proc/meminfo`. The output format is like the `free` command.
+#[napi]
+pub fn free() -> Result<Free> {
     const USEFUL_ITEMS: [&[u8]; 11] = [
         b"MemTotal",
         b"MemFree",
@@ -72,7 +98,7 @@ fn free(mut cx: FunctionContext) -> JsResult<JsObject> {
 
     let mut sc: ScannerAscii<_, U768> = match ScannerAscii::scan_path2("/proc/meminfo") {
         Ok(file) => file,
-        Err(err) => return cx.throw_error(err.to_string()),
+        Err(err) => return Err(Error::from_reason(err.to_string())),
     };
 
     let mut item_values = [0usize; USEFUL_ITEMS.len()];
@@ -80,24 +106,20 @@ fn free(mut cx: FunctionContext) -> JsResult<JsObject> {
     for (i, &item) in USEFUL_ITEMS.iter().enumerate() {
         loop {
             let label = match sc.next_raw() {
-                Ok(v) => {
-                    match v {
-                        Some(v) => v,
-                        None => return cx.throw_error("unexpected EOF"),
-                    }
-                }
-                Err(err) => return cx.throw_error(err.to_string()),
+                Ok(v) => match v {
+                    Some(v) => v,
+                    None => return Err(Error::from_reason("unexpected EOF")),
+                },
+                Err(err) => return Err(Error::from_reason(err.to_string())),
             };
 
             if label.starts_with(item) {
                 let value = match sc.next_usize() {
-                    Ok(v) => {
-                        match v {
-                            Some(v) => v * 1024,
-                            None => return cx.throw_error("unexpected EOF"),
-                        }
-                    }
-                    Err(err) => return cx.throw_error(err.to_string()),
+                    Ok(v) => match v {
+                        Some(v) => v * 1024,
+                        None => return Err(Error::from_reason("unexpected EOF")),
+                    },
+                    Err(err) => return Err(Error::from_reason(err.to_string())),
                 };
 
                 item_values[i] = value;
@@ -105,10 +127,10 @@ fn free(mut cx: FunctionContext) -> JsResult<JsObject> {
                 match sc.drop_next() {
                     Ok(v) => {
                         if v.is_none() {
-                            return cx.throw_error("unexpected EOF");
+                            return Err(Error::from_reason("unexpected EOF"));
                         }
-                    }
-                    Err(err) => return cx.throw_error(err.to_string()),
+                    },
+                    Err(err) => return Err(Error::from_reason(err.to_string())),
                 }
 
                 break;
@@ -116,10 +138,10 @@ fn free(mut cx: FunctionContext) -> JsResult<JsObject> {
                 match sc.drop_next_line() {
                     Ok(v) => {
                         if v.is_none() {
-                            return cx.throw_error("unexpected EOF");
+                            return Err(Error::from_reason("unexpected EOF"));
                         }
-                    }
-                    Err(err) => return cx.throw_error(err.to_string()),
+                    },
+                    Err(err) => return Err(Error::from_reason(err.to_string())),
                 }
             }
         }
@@ -139,55 +161,27 @@ fn free(mut cx: FunctionContext) -> JsResult<JsObject> {
 
     let total_cached = cached + slab - s_unreclaim;
 
-    let mem = JsObject::new(&mut cx);
+    let mem = Mem {
+        total:     total as f64,
+        used:      (total - free - buffers - total_cached) as f64,
+        free:      free as f64,
+        shared:    shmem as f64,
+        buffers:   buffers as f64,
+        cache:     total_cached as f64,
+        available: available as f64,
+    };
 
-    let v = JsNumber::new(&mut cx, total as f64);
-    mem.set(&mut cx, "total", v)?;
+    let swap = Swap {
+        total: total as f64,
+        used:  (swap_total - swap_free - swap_cached) as f64,
+        free:  free as f64,
+        cache: cached as f64,
+    };
 
-    let v = JsNumber::new(&mut cx, (total - free - buffers - total_cached) as f64);
-    mem.set(&mut cx, "used", v)?;
-
-    let v = JsNumber::new(&mut cx, free as f64);
-    mem.set(&mut cx, "free", v)?;
-
-    let v = JsNumber::new(&mut cx, shmem as f64);
-    mem.set(&mut cx, "shared", v)?;
-
-    let v = JsNumber::new(&mut cx, buffers as f64);
-    mem.set(&mut cx, "buffers", v)?;
-
-    let v = JsNumber::new(&mut cx, total_cached as f64);
-    mem.set(&mut cx, "cache", v)?;
-
-    let v = JsNumber::new(&mut cx, available as f64);
-    mem.set(&mut cx, "available", v)?;
-
-    let swap = JsObject::new(&mut cx);
-
-    let v = JsNumber::new(&mut cx, total_cached as f64);
-    swap.set(&mut cx, "total", v)?;
-
-    let v = JsNumber::new(&mut cx, (swap_total - swap_free - swap_cached) as f64);
-    swap.set(&mut cx, "used", v)?;
-
-    let v = JsNumber::new(&mut cx, swap_free as f64);
-    swap.set(&mut cx, "free", v)?;
-
-    let v = JsNumber::new(&mut cx, swap_cached as f64);
-    swap.set(&mut cx, "cache", v)?;
-
-    let obj = JsObject::new(&mut cx);
-
-    obj.set(&mut cx, "mem", mem)?;
-    obj.set(&mut cx, "swap", swap)?;
+    let obj = Free {
+        mem,
+        swap,
+    };
 
     Ok(obj)
-}
-
-#[neon::main]
-fn main(mut cx: ModuleContext) -> NeonResult<()> {
-    cx.export_function("get", get)?;
-    cx.export_function("free", free)?;
-
-    Ok(())
 }
