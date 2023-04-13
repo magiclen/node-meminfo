@@ -30,7 +30,7 @@ pub struct Free {
 }
 
 /// Get data from `/proc/meminfo`.
-#[napi(ts_return_type="Record<string, number>")]
+#[napi(ts_return_type = "Record<string, number>")]
 pub fn meminfo(env: Env) -> Result<Object> {
     let mut sc: ScannerAscii<_, U768> = match ScannerAscii::scan_path2("/proc/meminfo") {
         Ok(file) => file,
