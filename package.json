@@ -1,6 +1,6 @@
 {
   "name": "node-meminfo",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Get memory information on Linux.",
   "type": "module",
   "exports": "./lib/lib.js",
@@ -21,7 +21,7 @@
     "test:coverage": "node --experimental-specifier-resolution=node --experimental-vm-modules  node_modules/jest/bin/jest.js --coverage",
     "test:inspect-brk": "node --experimental-specifier-resolution=node --experimental-vm-modules --inspect-brk=0.0.0.0:9230 node_modules/jest/bin/jest.js --testTimeout 0 --runInBand",
     "clean": "rimraf lib",
-    "install": "napi build --platform --js index.cjs --release",
+    "install": "napi build --release --platform --js index.cjs --dts index.d.cts",
     "build": "npm run clean && npm run install && tsc -p tsconfig.build.json",
     "build:watch": "npm run build -- -w",
     "lint": "eslint src tests",
