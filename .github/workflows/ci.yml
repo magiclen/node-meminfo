@@ -32,7 +32,7 @@ jobs:
         os:
           - ubuntu-latest
         toolchain:
-          - 1.57
+          - 1.63
           - stable
           - nightly
         node-version:
