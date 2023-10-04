@@ -1,4 +1,4 @@
-import { meminfo, free } from "../src/lib.js";
+import { free, meminfo } from "../src/lib.js";
 
 describe("meminfo", () => {
     it("should get data from /proc/meminfo", () => {
